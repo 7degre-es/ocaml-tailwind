@@ -1,0 +1,3 @@
+(library
+ (name tailwind)
+ (public_name tailwind))

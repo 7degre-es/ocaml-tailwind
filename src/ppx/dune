@@ -1,0 +1,5 @@
+(library
+ (name ppx_tailwind)
+ (public_name tailwind.ppx)
+ (libraries ppxlib tailwind unix)
+ (preprocess (pps metaquot.ppx)))

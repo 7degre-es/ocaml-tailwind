@@ -1,0 +1,4 @@
+(library
+ (name ppx_tailwind_example)
+ (libraries ppx_tailwind)
+ (kind ppx_rewriter))

@@ -1,0 +1,3 @@
+(library
+ (name tailwind_tyxml)
+ (libraries tailwind tyxml))
