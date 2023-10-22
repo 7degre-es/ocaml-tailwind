@@ -7,18 +7,21 @@ let apply_modifier modifier (C (modifiers, s, a)) =
   C (modifier :: modifiers, s, a)
 
 let to_string (C (modifiers, style, arg)) =
-  Format.asprintf "%a%s%a"
+  let style_str_opt = Style.to_string style in
+  Format.asprintf "%a%a%a"
     (fun fmt () ->
       List.iter
         (fun modifier ->
           Format.pp_print_string fmt (Modifier.to_string modifier);
           Format.pp_print_char fmt ':')
         modifiers)
-    () (Style.to_string style)
+    ()
+    (Format.pp_print_option Format.pp_print_string)
+    style_str_opt
     (fun fmt () ->
       match arg with
       | Style.Term -> ()
       | _ ->
-          Format.pp_print_char fmt '-';
+          Option.iter (fun _ -> Format.pp_print_char fmt '-') style_str_opt;
           Format.pp_print_string fmt (Style.arg_to_string arg))
     ()

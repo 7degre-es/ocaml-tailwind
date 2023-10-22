@@ -1,4 +1,4 @@
 (executable
  (name example)
  (libraries tailwind_tyxml tyxml)
- (preprocess (pps ppx_tailwind_example)))
+ (preprocess (pps ppx_tailwind)))

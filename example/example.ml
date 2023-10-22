@@ -26,7 +26,9 @@ let view =
          h2 [ txt "Font styles" ];
          h3 [ txt "Serif" ];
          p ~a:[ classes [ [%tw font mono] ] ] [ txt "Monospace" ];
-         p ~a:[ classes [ [%tw font serif] ] ] [ txt "Serif" ];
+         p
+           ~a:[ classes [ [%tw font serif]; [%tw background (slate 500t)] ] ]
+           [ txt "Serif" ];
          h2 [ txt "Modifiers" ];
          h3 [ txt "Hover" ];
          div
