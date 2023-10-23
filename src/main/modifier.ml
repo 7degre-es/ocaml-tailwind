@@ -1,11 +1,4 @@
-type t = 
-  | Sm
-  | Md
-  | Lg
-  | Xl
-  | Xxl
-  | Dark
-  | Hover
+type t = Sm | Md | Lg | Xl | Xxl | Dark | Hover
 
 let to_string = function
   | Sm -> "sm"

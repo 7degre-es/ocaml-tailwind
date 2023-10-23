@@ -1,4 +1,5 @@
 type _ t =
+  | Neg : ([< `order ] as 'a) t -> 'a t
   | Flex : [ `flex ] t
   | Width : [ `width ] t
   | Font : [ `font ] t
@@ -15,8 +16,13 @@ type _ t =
   | Justify : [ `justify ] t
   | Justify_items : [ `justify_items ] t
   | Background : [ `background ] t
+  | Basis : [ `basis ] t
+  | Grow : [ `grow ] t
+  | Shrink : [ `shrink ] t
+  | Order : [ `order ] t
 
-let to_string : type a. a t -> string option = function
+let rec to_string : type a. a t -> string option = function
+  | Neg t -> Option.map (fun str -> "-" ^ str) (to_string t)
   | Aspect -> Some "aspect"
   | Flex -> Some "flex"
   | Width -> Some "width"
@@ -28,6 +34,10 @@ let to_string : type a. a t -> string option = function
   | Justify -> Some "justify"
   | Justify_items -> Some "justify-items"
   | Background -> Some "bg"
+  | Basis -> Some "basis"
+  | Grow -> Some "grow"
+  | Shrink -> Some "shrink"
+  | Order -> Some "order"
   | Font_style | Smoothing | Font_variant_numeric | Text_decoration
   | Text_transform ->
       None
@@ -38,44 +48,46 @@ type dimension =
 type color = [ `background ]
 
 type _ arg =
-  | Term : [< `flex ] arg
+  | Term : [< `flex | `grow | `shrink ] arg
+  | Num : 'a Num.t -> 'a arg
   | Arbitrary : string -> _ arg
   | Custom : string -> _ arg
-  | Auto : [< `aspect ] arg
+  | Auto : [< `aspect | `basis | `flex ] arg
   | Square : [< `aspect ] arg
   | Video : [< `aspect ] arg
   | Inherit : [< `background ] arg
   | Current : [< `background ] arg
+  | Px : [< `basis ] arg
   | Transparent : [< color ] arg
   | White : [< color ] arg
-  | Slate : Color.temperature -> [< color ] arg
-  | Gray : Color.temperature -> [< color ] arg
-  | Zinc : Color.temperature -> [< color ] arg
-  | Neutral : Color.temperature -> [< color ] arg
-  | Stone : Color.temperature -> [< color ] arg
-  | Red : Color.temperature -> [< color ] arg
-  | Orange : Color.temperature -> [< color ] arg
-  | Amber : Color.temperature -> [< color ] arg
-  | Yellow : Color.temperature -> [< color ] arg
-  | Lime : Color.temperature -> [< color ] arg
-  | Green : Color.temperature -> [< color ] arg
-  | Emerald : Color.temperature -> [< color ] arg
-  | Teal : Color.temperature -> [< color ] arg
-  | Cyan : Color.temperature -> [< color ] arg
-  | Sky : Color.temperature -> [< color ] arg
-  | Blue : Color.temperature -> [< color ] arg
-  | Indigo : Color.temperature -> [< color ] arg
-  | Violet : Color.temperature -> [< color ] arg
-  | Purple : Color.temperature -> [< color ] arg
-  | Fuschia : Color.temperature -> [< color ] arg
-  | Pink : Color.temperature -> [< color ] arg
-  | Rose : Color.temperature -> [< color ] arg
+  | Slate : [< `color_temperature ] arg -> [< color ] arg
+  | Gray : [< `color_temperature ] arg -> [< color ] arg
+  | Zinc : [< `color_temperature ] arg -> [< color ] arg
+  | Neutral : [< `color_temperature ] arg -> [< color ] arg
+  | Stone : [< `color_temperature ] arg -> [< color ] arg
+  | Red : [< `color_temperature ] arg -> [< color ] arg
+  | Orange : [< `color_temperature ] arg -> [< color ] arg
+  | Amber : [< `color_temperature ] arg -> [< color ] arg
+  | Yellow : [< `color_temperature ] arg -> [< color ] arg
+  | Lime : [< `color_temperature ] arg -> [< color ] arg
+  | Green : [< `color_temperature ] arg -> [< color ] arg
+  | Emerald : [< `color_temperature ] arg -> [< color ] arg
+  | Teal : [< `color_temperature ] arg -> [< color ] arg
+  | Cyan : [< `color_temperature ] arg -> [< color ] arg
+  | Sky : [< `color_temperature ] arg -> [< color ] arg
+  | Blue : [< `color_temperature ] arg -> [< color ] arg
+  | Indigo : [< `color_temperature ] arg -> [< color ] arg
+  | Violet : [< `color_temperature ] arg -> [< color ] arg
+  | Purple : [< `color_temperature ] arg -> [< color ] arg
+  | Fuschia : [< `color_temperature ] arg -> [< color ] arg
+  | Pink : [< `color_temperature ] arg -> [< color ] arg
+  | Rose : [< `color_temperature ] arg -> [< color ] arg
   | Solid : [< `decoration ] arg
   | Double : [< `decoration ] arg
   | Dotted : [< `decoration ] arg
   | Dashed : [< `decoration ] arg
   | Wavy : [< `decoration ] arg
-  | Full : [< dimension ] arg
+  | Full : [< dimension | `basis ] arg
   | Sans : [< `font ] arg
   | Serif : [< `font ] arg
   | Mono : [< `font ] arg
@@ -106,13 +118,14 @@ type _ arg =
   | Wrap : [< `flex ] arg
   | Wrap_reverse : [< `flex ] arg
   | Nowrap : [< `flex ] arg
+  | Initial : [< `flex ] arg
   | Between : [< `justify ] arg
   | Around : [< `justify ] arg
   | Evenly : [< `justify ] arg
   | Stretch : [< `justify | `justify_items ] arg
   | Inside : [< `list ] arg
   | Outside : [< `list ] arg
-  | None : [< `list ] arg
+  | None : [< `list | `flex ] arg
   | Disc : [< `list ] arg
   | Decimal : [< `list ] arg
   | Antialiased : [< `smoothing ] arg
@@ -150,7 +163,7 @@ type _ arg =
   | Wider : [< `tracking ] arg
   | Widest : [< `tracking ] arg
 
-let arg_to_string : type a. a arg -> string = function
+let rec arg_to_string : type a. a arg -> string = function
   | Arbitrary str -> "[" ^ str ^ "]"
   | Auto -> "auto"
   | Col -> "col"
@@ -240,25 +253,28 @@ let arg_to_string : type a. a arg -> string = function
   | Current -> "current"
   | Transparent -> "transparent"
   | White -> "white"
-  | Slate t -> "slate-" ^ Color.temperature_to_string t
-  | Gray t -> "gray-" ^ Color.temperature_to_string t
-  | Zinc t -> "zinc-" ^ Color.temperature_to_string t
-  | Neutral t -> "neutral-" ^ Color.temperature_to_string t
-  | Stone t -> "stone-" ^ Color.temperature_to_string t
-  | Red t -> "red-" ^ Color.temperature_to_string t
-  | Orange t -> "orange-" ^ Color.temperature_to_string t
-  | Amber t -> "amber-" ^ Color.temperature_to_string t
-  | Yellow t -> "yellow-" ^ Color.temperature_to_string t
-  | Lime t -> "lime-" ^ Color.temperature_to_string t
-  | Green t -> "green-" ^ Color.temperature_to_string t
-  | Emerald t -> "emerald-" ^ Color.temperature_to_string t
-  | Teal t -> "teal-" ^ Color.temperature_to_string t
-  | Cyan t -> "cyan-" ^ Color.temperature_to_string t
-  | Sky t -> "sky-" ^ Color.temperature_to_string t
-  | Blue t -> "blue-" ^ Color.temperature_to_string t
-  | Indigo t -> "indigo-" ^ Color.temperature_to_string t
-  | Violet t -> "violet-" ^ Color.temperature_to_string t
-  | Purple t -> "purple-" ^ Color.temperature_to_string t
-  | Fuschia t -> "fuschia-" ^ Color.temperature_to_string t
-  | Pink t -> "pink-" ^ Color.temperature_to_string t
-  | Rose t -> "rose-" ^ Color.temperature_to_string t
+  | Slate t -> "slate-" ^ arg_to_string t
+  | Gray t -> "gray-" ^ arg_to_string t
+  | Zinc t -> "zinc-" ^ arg_to_string t
+  | Neutral t -> "neutral-" ^ arg_to_string t
+  | Stone t -> "stone-" ^ arg_to_string t
+  | Red t -> "red-" ^ arg_to_string t
+  | Orange t -> "orange-" ^ arg_to_string t
+  | Amber t -> "amber-" ^ arg_to_string t
+  | Yellow t -> "yellow-" ^ arg_to_string t
+  | Lime t -> "lime-" ^ arg_to_string t
+  | Green t -> "green-" ^ arg_to_string t
+  | Emerald t -> "emerald-" ^ arg_to_string t
+  | Teal t -> "teal-" ^ arg_to_string t
+  | Cyan t -> "cyan-" ^ arg_to_string t
+  | Sky t -> "sky-" ^ arg_to_string t
+  | Blue t -> "blue-" ^ arg_to_string t
+  | Indigo t -> "indigo-" ^ arg_to_string t
+  | Violet t -> "violet-" ^ arg_to_string t
+  | Purple t -> "purple-" ^ arg_to_string t
+  | Fuschia t -> "fuschia-" ^ arg_to_string t
+  | Pink t -> "pink-" ^ arg_to_string t
+  | Rose t -> "rose-" ^ arg_to_string t
+  | Num n -> Num.to_string n
+  | Px -> "px"
+  | Initial -> "initial"

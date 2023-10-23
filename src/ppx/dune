@@ -3,4 +3,5 @@
  (public_name tailwind.ppx)
  (libraries ppxlib tailwind unix)
  (kind ppx_rewriter)
- (preprocess (pps metaquot.ppx)))
+ (preprocess
+  (pps metaquot.ppx)))

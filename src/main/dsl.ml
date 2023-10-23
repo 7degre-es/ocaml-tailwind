@@ -1,4 +1,7 @@
+(** Infix operators *)
+
 let ( !! ) v = v Style.Term
+let ( ~- ) v = Style.Neg v
 
 (** Styles *)
 
@@ -12,6 +15,9 @@ let decoration a = Klass.make Decoration a
 let justify a = Klass.make Justify a
 let justify_items a = Klass.make Justify_items a
 let background a = Klass.make Background a
+let basis a = Klass.make Basis a
+let grow a = Klass.make Grow a
+let shrink a = Klass.make Shrink a
 
 (** Compound styles *)
 
@@ -125,6 +131,7 @@ let between = Style.Between
 let around = Style.Around
 let evenly = Style.Evenly
 let stretch = Style.Stretch
+let px = Style.Px
 
 (** Modifiers *)
 
