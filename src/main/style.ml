@@ -20,6 +20,8 @@ type _ t =
   | Grow : [ `grow ] t
   | Shrink : [ `shrink ] t
   | Order : [ `order ] t
+  | Grid_cols : [ `grid_cols ] t
+  | Columns : [ `columns ] t
 
 let rec to_string : type a. a t -> string option = function
   | Neg t -> Option.map (fun str -> "-" ^ str) (to_string t)
@@ -38,6 +40,8 @@ let rec to_string : type a. a t -> string option = function
   | Grow -> Some "grow"
   | Shrink -> Some "shrink"
   | Order -> Some "order"
+  | Grid_cols -> Some "grid-cols"
+  | Columns -> Some "columns"
   | Font_style | Smoothing | Font_variant_numeric | Text_decoration
   | Text_transform ->
       None
@@ -52,7 +56,7 @@ type _ arg =
   | Num : 'a Num.t -> 'a arg
   | Arbitrary : string -> _ arg
   | Custom : string -> _ arg
-  | Auto : [< `aspect | `basis | `flex ] arg
+  | Auto : [< `aspect | `basis | `flex | `columns ] arg
   | Square : [< `aspect ] arg
   | Video : [< `aspect ] arg
   | Inherit : [< `background ] arg
@@ -125,22 +129,24 @@ type _ arg =
   | Stretch : [< `justify | `justify_items ] arg
   | Inside : [< `list ] arg
   | Outside : [< `list ] arg
-  | None : [< `list | `flex ] arg
+  | None : [< `list | `flex | `grid_cols ] arg
   | Disc : [< `list ] arg
   | Decimal : [< `list ] arg
   | Antialiased : [< `smoothing ] arg
   | Subpixel_antialiased : [< `smoothing ] arg
-  | Xs : [< `text ] arg
-  | Sm : [< `text ] arg
-  | Base : [< `text ] arg
-  | Lg : [< `text ] arg
-  | Xl : [< `text ] arg
-  | X2l : [< `text ] arg
-  | X3l : [< `text ] arg
-  | X4l : [< `text ] arg
-  | X5l : [< `text ] arg
-  | X6l : [< `text ] arg
-  | X7l : [< `text ] arg
+  | X3s : [< `columns ] arg
+  | X2s : [< `columns ] arg
+  | Xs : [< `text | `columns ] arg
+  | Sm : [< `text | `columns ] arg
+  | Base : [< `text | `columns ] arg
+  | Lg : [< `text | `columns ] arg
+  | Xl : [< `text | `columns ] arg
+  | X2l : [< `text | `columns ] arg
+  | X3l : [< `text | `columns ] arg
+  | X4l : [< `text | `columns ] arg
+  | X5l : [< `text | `columns ] arg
+  | X6l : [< `text | `columns ] arg
+  | X7l : [< `text | `columns ] arg
   | X8l : [< `text ] arg
   | X9l : [< `text ] arg
   | Left : [< `text ] arg
@@ -278,3 +284,5 @@ let rec arg_to_string : type a. a arg -> string = function
   | Num n -> Num.to_string n
   | Px -> "px"
   | Initial -> "initial"
+  | X2s -> "2xs"
+  | X3s -> "3xs"

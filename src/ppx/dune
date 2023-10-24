@@ -1,7 +1,7 @@
 (library
  (name ppx_tailwind)
  (public_name tailwind.ppx)
- (libraries ppxlib tailwind unix)
+ (libraries ppxlib tailwind astring unix)
  (kind ppx_rewriter)
  (preprocess
   (pps metaquot.ppx)))
