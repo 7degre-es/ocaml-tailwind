@@ -22,6 +22,10 @@ type _ t =
   | Order : [ `order ] t
   | Grid_cols : [ `grid_cols ] t
   | Columns : [ `columns ] t
+  | Break_after : [ `break_after ] t
+  | Break_before : [ `break_before ] t
+  | Break_inside : [ `break_inside ] t
+  | Box_decoration : [ `box_decoration ] t
 
 let rec to_string : type a. a t -> string option = function
   | Neg t -> Option.map (fun str -> "-" ^ str) (to_string t)
@@ -42,6 +46,10 @@ let rec to_string : type a. a t -> string option = function
   | Order -> Some "order"
   | Grid_cols -> Some "grid-cols"
   | Columns -> Some "columns"
+  | Break_after -> Some "break-after"
+  | Break_before -> Some "break-before"
+  | Break_inside -> Some "break-inside"
+  | Box_decoration -> Some "box-decoration"
   | Font_style | Smoothing | Font_variant_numeric | Text_decoration
   | Text_transform ->
       None
@@ -49,6 +57,7 @@ let rec to_string : type a. a t -> string option = function
 type dimension =
   [ `width | `min_width | `max_width | `height | `min_height | `max_height ]
 
+type break = [ `break_after | `break_before | `break_inside ]
 type color = [ `background ]
 
 type _ arg =
@@ -56,12 +65,19 @@ type _ arg =
   | Num : 'a Num.t -> 'a arg
   | Arbitrary : string -> _ arg
   | Custom : string -> _ arg
-  | Auto : [< `aspect | `basis | `flex | `columns ] arg
+  | Auto : [< `aspect | `basis | `flex | `columns | break ] arg
   | Square : [< `aspect ] arg
   | Video : [< `aspect ] arg
   | Inherit : [< `background ] arg
   | Current : [< `background ] arg
+  | Clone : [< `box_decoration ] arg
+  | Slice : [< `box_decoration ] arg
   | Px : [< `basis ] arg
+  | Avoid : [< break ] arg
+  | All : [< break ] arg
+  | Avoid_page : [< break ] arg
+  | Page : [< break ] arg
+  | Column : [< break ] arg
   | Transparent : [< color ] arg
   | White : [< color ] arg
   | Slate : [< `color_temperature ] arg -> [< color ] arg
@@ -86,6 +102,7 @@ type _ arg =
   | Fuschia : [< `color_temperature ] arg -> [< color ] arg
   | Pink : [< `color_temperature ] arg -> [< color ] arg
   | Rose : [< `color_temperature ] arg -> [< color ] arg
+  | Md : [< `columns ] arg
   | Solid : [< `decoration ] arg
   | Double : [< `decoration ] arg
   | Dotted : [< `decoration ] arg
@@ -149,9 +166,9 @@ type _ arg =
   | X7l : [< `text | `columns ] arg
   | X8l : [< `text ] arg
   | X9l : [< `text ] arg
-  | Left : [< `text ] arg
+  | Left : [< `text | break ] arg
   | Center : [< `text | `justify | `justify_items ] arg
-  | Right : [< `text ] arg
+  | Right : [< `text | break ] arg
   | Justify : [< `text ] arg
   | Start : [< `text | `justify | `justify_items ] arg
   | End : [< `text | `justify | `justify_items ] arg
@@ -286,3 +303,11 @@ let rec arg_to_string : type a. a arg -> string = function
   | Initial -> "initial"
   | X2s -> "2xs"
   | X3s -> "3xs"
+  | Md -> "md"
+  | Avoid -> "avoid"
+  | All -> "all"
+  | Avoid_page -> "avoid-page"
+  | Page -> "page"
+  | Column -> "column"
+  | Clone -> "clone"
+  | Slice -> "slice"

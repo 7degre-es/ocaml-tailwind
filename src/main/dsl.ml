@@ -18,6 +18,11 @@ let background a = Klass.make Background a
 let basis a = Klass.make Basis a
 let grow a = Klass.make Grow a
 let shrink a = Klass.make Shrink a
+let columns a = Klass.make Columns a
+let break_after a = Klass.make Break_after a
+let break_before a = Klass.make Break_before a
+let break_inside a = Klass.make Break_inside a
+let box_decoration a = Klass.make Box_decoration a
 
 (** Compound styles *)
 
@@ -134,6 +139,14 @@ let around = Style.Around
 let evenly = Style.Evenly
 let stretch = Style.Stretch
 let px = Style.Px
+let md = Style.Md
+let avoid = Style.Avoid
+let all = Style.All
+let avoid_page = Style.Avoid_page
+let page = Style.Page
+let column = Style.Column
+let clone = Style.Clone
+let slice = Style.Slice
 
 (** Modifiers *)
 

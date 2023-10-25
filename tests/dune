@@ -1,0 +1,4 @@
+(tests
+ (names aspect_ratio columns break_after break_before break_inside box_decoration)
+ (libraries tailwind)
+ (preprocess (pps ppx_tailwind)))
